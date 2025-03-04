@@ -1,0 +1,602 @@
+/* Reset CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+}
+
+/* Style untuk loading spinner */
+.loading-spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5); /* Latar belakang semi-transparan */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1000; /* Pastikan spinner di atas elemen lain */
+    display: none; /* Sembunyikan secara default */
+}
+
+/* Animasi spinner */
+.spinner {
+    border: 6px solid #f3f3f3; /* Warna ring spinner */
+    border-top: 6px solid #3498db; /* Warna spinner */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite; /* Animasi putar */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Teks loading */
+.loading-spinner p {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #3498db;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #2c3e50;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 30px;
+    padding-bottom: 20px; /* Tambahkan padding bawah untuk lebih banyak ruang */
+    box-sizing: border-box; /* Agar padding dan margin tidak mempengaruhi ukuran */
+}
+
+.sidebar .profile {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.sidebar .profile img {
+    width: 70%; /* Ubah ukuran gambar menjadi lebih proporsional */
+    height: auto; /* Menjaga aspek rasio gambar */
+    border-radius: 50%;
+    margin-bottom: 15px; /* Memberikan ruang di bawah gambar */
+}
+
+.sidebar .profile h3 {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.sidebar .profile p {
+    font-size: 14px;
+    color: #bdc3c7; /* Warna lebih terang untuk teks deskripsi */
+}
+
+/* Link Styling */
+.sidebar a {
+    color: white;
+    text-decoration: none;
+    padding: 12px 20px; /* Padding kiri-kanan lebih lebar agar lebih nyaman */
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, padding-left 0.3s ease; /* Transisi lembut */
+}
+
+.sidebar a:hover {
+    background-color: #34495e;
+    padding-left: 30px; /* Memberikan efek animasi saat hover */
+}
+
+/* Menambahkan margin pada ikon untuk memberi jarak antara ikon dan teks */
+.sidebar a i {
+    margin-right: 15px; /* Menambah jarak ikon dengan teks */
+    font-size: 15px; /* Ukuran ikon sedikit lebih besar agar lebih menonjol */
+}
+
+/* Responsif: Agar sidebar menyesuaikan ukuran layar kecil */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        width: 200px; /* Mengurangi ukuran sidebar pada layar kecil */
+    }
+
+    .sidebar .profile img {
+        width: 80%; /* Ukuran gambar lebih kecil pada layar kecil */
+    }
+
+    .sidebar a {
+        padding: 10px 15px; /* Mengurangi padding pada link untuk ruang lebih efisien */
+    }
+}
+
+/* Content Area */
+.content {
+    margin-left: 250px;
+    padding: 20px;
+}
+
+/* Header Styling */
+.header {
+    background-color: #34495e;
+    border-radius: 10px;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header a {
+    color: white;
+    text-decoration: none;
+}
+
+/* Tabel Styling */
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    overflow: hidden; /* Ensure rounded corners are maintained */
+    border: 1px solid #ddd; /* Light border around the entire table */
+}
+
+th, td {
+    padding: 10px; /* Slightly smaller padding to make the table more compact */
+    text-align: center; /* Center align text for a cleaner look */
+    border-bottom: 1px solid #ddd;
+    font-size: 14px; /* Adjust font size for better readability */
+}
+
+th {
+    background-color: #3498db; /* Dark gray-blue for a more neutral header */
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px; /* Reduce the font size for header */
+    letter-spacing: 1px; /* Add spacing between letters for better readability */
+}
+
+
+td {
+    background-color: #f9f9f9; /* Light gray background for data rows */
+}
+
+tr:hover {
+    background-color: #ecf0f1; /* Subtle hover effect with light grey */
+}
+
+tr:nth-child(even) {
+    background-color: #f5f5f5; /* Lighter color for even rows for better readability */
+}
+
+tr:nth-child(odd) {
+    background-color: #ffffff; /* White background for odd rows */
+}
+
+/* Button styling within the table */
+button {
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    color: white;
+}
+
+.btn-view {
+    background-color: #3498db;
+}
+
+.btn-edit {
+    background-color: #f39c12;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+/* Responsive Styles for Tables */
+@media screen and (max-width: 768px) {
+    table {
+        font-size: 12px; /* Make text smaller on mobile */
+    }
+
+    th, td {
+        padding: 8px; /* Reduce padding on smaller screens */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    th, td {
+        padding: 6px; /* Further reduce padding on very small screens */
+        font-size: 10px; /* Reduce font size for mobile */
+    }
+
+    table {
+        font-size: 10px; /* Adjust table font size */
+    }
+}
+
+
+/* Button Styling */
+.btn {
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-view {
+    background-color: #3498db;
+}
+
+.btn-edit {
+    background-color: #f39c12;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+/* Footer Styling */
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #34495e;
+    color: white;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Modal Styling */
+.modal{
+    display: none; /* Modal disembunyikan secara default */
+    position: fixed; /* Menempel di layar */
+    z-index: 1; /* Agar modal berada di atas elemen lain */
+    left: 0;
+    top: 0;
+    width: 100%; /* Lebar penuh */
+    height: 100%; /* Tinggi penuh */
+    overflow: auto; /* Enable scroll jika diperlukan */
+    background-color: rgba(0, 0, 0, 0.4); /* Latar belakang gelap transparan */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin:auto; /* Mengatur margin agar berada di tengah */
+    padding: 15px;
+    border: 1px solid #888;
+    width: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+/* Close Button */
+.close-btn {
+    color: #aaa;
+    position:absolute;
+    bottom: 850px;
+    right: 430px; /* Menempatkan di kanan */
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: red;
+    text-decoration: none;
+}
+
+
+.close-btn-file {
+    color: #aaa;
+    position:absolute;
+    bottom: 820px;
+    right: 250px; /* Menempatkan di kanan */
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn-file:hover,
+.close-btn-file:focus {
+    color: red;
+    text-decoration: none;
+}
+
+/* Form Styling Inside Modal */
+.modal form input,
+.modal form textarea,
+.modal form button {
+    width: 100%; /* Full width */
+    padding: 12px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.modal form input[type="date"] {
+    background-color: #fafafa;
+}
+
+.modal form button {
+    background-color: #3498db;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal form button:hover {
+    background-color: #2980b9;
+}
+
+/* Styles for the Lihat File button */
+.btn-view-file {
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text color */
+    border: none; /* Remove default border */
+    padding: 10px 20px; /* Padding inside the button */
+    text-align: center; /* Center text */
+    text-decoration: none; /* Remove underline */
+    display: inline-block; /* Keep it inline */
+    font-size: 14px; /* Set font size */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.btn-view-file:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+.btn-view-file:focus {
+    outline: none; /* Remove focus outline */
+}
+
+.btn-view-file:active {
+    background-color: #3e8e41; /* Even darker green on click */
+}
+
+/* MODAL FILE PREVIEW STYLING - BARU DITAMBAHKAN */
+.modal-file {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content-file {
+    background-color: #fefefe;
+    margin: 2% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 85%;
+    max-width: 1200px;
+    height: 85vh;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+}
+
+#filePreview {
+    width: 100%;
+    height: 85%;
+    overflow: hidden;
+    margin-bottom: 15px;
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+#filePreview iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+#filePreview img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    margin: 0 auto;
+}
+
+.modal-content-file h3 {
+    margin-bottom: 15px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.modaledit {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    overflow: auto;
+}
+
+.modal-content-edit {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 40%;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.close-btn-edit {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.close-btn-edit:hover {
+    color: red;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input, textarea {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.submit-edit {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.submit-edit:hover {
+    background-color: #0056b3;
+}
+
+/* MEDIA QUERIES UNTUK RESPONSIF PADA BERBAGAI UKURAN LAYAR */
+@media screen and (max-width: 1200px) {
+    .modal-content-file {
+        width: 90%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .modal-content-file {
+        width: 95%;
+        height: 80vh;
+        margin: 5% auto;
+    }
+    
+    .sidebar {
+        width: 200px;
+    }
+    
+    .content {
+        margin-left: 200px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .modal-content-file {
+        width: 98%;
+        height: 75vh;
+        padding: 10px;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    
+    .content {
+        margin-left: 0;
+    }
+    
+    .modal-content {
+        width: 90%;
+    }
+}
+
+.modal-content-out {
+    background-color: #fefefe;
+    margin:auto; /* Mengatur margin agar berada di tengah */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 85%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+/* Modal Styling */
+.modal-out{
+    display: none; /* Modal disembunyikan secara default */
+    position: fixed; /* Menempel di layar */
+    z-index: 1; /* Agar modal berada di atas elemen lain */
+    left: 0;
+    top: 20px;
+    width: 100%; /* Lebar penuh */
+    height: 100%; /* Tinggi penuh */
+    overflow: auto; /* Enable scroll jika diperlukan */
+    background-color: rgba(0, 0, 0, 0.4); /* Latar belakang gelap transparan */
+}
+
+/* Close Button */
+.close-btn-out {
+    color: #aaa;
+    position:absolute;
+    bottom: 850px;
+    right: 150px; /* Menempatkan di kanan */
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn-out:hover,
+.close-btnout:focus {
+    color: red;
+    text-decoration: none;
+}
+
+.action-buttons-out {
+    background-color: #e74c3c;
+    padding: 7px;
+    border-radius: 7px;
+}

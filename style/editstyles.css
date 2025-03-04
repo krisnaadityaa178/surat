@@ -1,0 +1,145 @@
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7fc;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Heading Styles */
+h2 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px; /* Reduced the font size */
+}
+
+/* Content Wrapper */
+.content {
+    background-color: white;
+    width: 100%;
+    max-width: 600px; /* Slightly reduced max-width */
+    padding: 20px; /* Reduced padding */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin: 20px;
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Input Styles */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+textarea {
+    padding: 12px; /* Reduced padding */
+    margin: 8px 0; /* Reduced margin */
+    border-radius: 6px; /* Slightly reduced border radius */
+    border: 1px solid #ddd;
+    font-size: 15px; /* Reduced font size */
+    background-color: #f9f9f9;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+textarea {
+    resize: vertical;
+    height: 100px; /* Reduced textarea height */
+}
+
+/* Focus State */
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+textarea:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Button Styles */
+button[type="submit"] {
+    padding: 12px 20px; /* Reduced padding */
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px; /* Reduced border radius */
+    font-size: 16px; /* Slightly smaller font size */
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+}
+
+button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+/* Tambahkan ini ke dalam file CSS Anda (misalnya editstyles.css) */
+
+.btn-back{
+    background-color: rgb(223, 19, 19);
+    position:relative;
+    margin-top: 5px;/* Warna latar belakang hijau untuk tombol Update */
+    color: white; /* Warna teks putih */
+    border: none; /* Hilangkan border */
+    padding: 10px 270px; /* Padding untuk membuat tombol lebih besar */
+    text-align: center; /* Menyelaraskan teks ke tengah */
+    text-decoration: none; /* Hilangkan garis bawah */
+    display: inline-block; /* Menjadikan tombol inline */
+    font-size: 16px; /* Ukuran font */
+    border-radius: 8px; /* Membuat sudut tombol lebih bulat */
+    cursor: pointer; /* Menunjukkan kursor pointer saat hover */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-back:hover {
+    background-color: rgb(235, 71, 123); /* Warna latar belakang berubah lebih gelap */
+    transform: scale(1.05); /* Memberikan efek sedikit membesar */
+}
+
+
+/* Efek Fokus untuk tombol */
+.btn-back:focus {
+    outline: none; /* Hilangkan outline saat tombol difokuskan */
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Efek shadow biru saat tombol difokuskan */
+}
+
+/* Tampilan responsif untuk tombol */
+@media (max-width: 600px) {
+    button {
+        width: 100%; /* Membuat tombol lebar penuh pada layar kecil */
+        font-size: 18px; /* Ukuran font sedikit lebih besar */
+    }
+}
+
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .content {
+        width: 90%;
+        padding: 15px;
+    }
+
+    h2 {
+        font-size: 22px;
+    }
+
+    button[type="submit"] {
+        font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    textarea {
+        font-size: 14px;
+    }
+}
