@@ -11,20 +11,20 @@ if (isset($_POST['login'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Cek apakah username dan password cocok (tanpa hashing)
-    $stmt = $pdo->prepare("SELECT * FROM admin WHERE username = ? AND password = ?");
-    $stmt->execute([$username, $password]);
+    $stmt = $pdo->prepare("SELECT * FROM admin WHERE username = ?");
+    $stmt->execute([$username]);
     $admin = $stmt->fetch();
 
-    if ($admin) {
+    if ($admin && password_verify($password, $admin['password'])) {
         $_SESSION['admin_id'] = $admin['id'];
         header('Location: index.php');
+        exit();
     } else {
         $error = "Username atau Password salah";
     }
 }
 ?>
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
