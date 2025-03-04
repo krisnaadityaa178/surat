@@ -1,3 +1,8 @@
+<!--Created By: Nadia Aprilia Siregar 
+    Created Date: 2025-02-27
+    this project is for BBPSDMP (Center for Human Resources Development and Research of Communication and Informatics Medan)
+-->
+
 <!--sk_masuk.php-->
 <?php
 session_start();
