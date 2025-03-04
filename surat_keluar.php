@@ -13,40 +13,6 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
-// Fungsi untuk menghapus data surat
-if (isset($_GET['delete_id'])) {
-    $delete_id = $_GET['delete_id'];
-
-    // Menyiapkan statement untuk memastikan data ada
-    $stmt = $pdo->prepare("SELECT * FROM surat_keluar WHERE id = ?"); // Ganti 'surat' menjadi 'surat_keluar'
-    $stmt->execute([$delete_id]);
-    $surat = $stmt->fetch();
-
-    // Pastikan surat ditemukan sebelum menghapus
-    if ($surat) {
-        // Menghapus data dari tabel surat_keluar berdasarkan ID
-        $stmt = $pdo->prepare("DELETE FROM surat_keluar WHERE id = ?"); // Ganti 'surat' menjadi 'surat_keluar'
-        $isDeleted = $stmt->execute([$delete_id]);
-
-        // Cek apakah penghapusan berhasil
-        //if ($isDeleted) {
-            // Berikan pesan sukses dan redirect
-            //$_SESSION['message'] = "Surat berhasil dihapus.";
-            //header('Location: surat_keluar.php');
-            //exit();  // Pastikan exit agar tidak ada output lain yang dikirim
-        //} else {
-            // Jika gagal, beri pesan error
-            //$_SESSION['error'] = "Gagal menghapus surat.";
-            //header('Location: surat_keluar.php');
-            //exit();
-        //}
-    //} else {
-        // Jika surat tidak ditemukan, beri pesan error
-        //$_SESSION['error'] = "Surat tidak ditemukan.";
-        //header('Location: surat_keluar.php');
-        //exit();
-    }
-}
 
 // Fungsi untuk memindahkan surat masuk ke surat keluar
 if (isset($_GET['move_id'])) {
@@ -129,6 +95,33 @@ if (isset($_GET['move_id'])) {
         header('Location: surat_keluar.php');
         exit();
     }
+}
+
+// Fungsi untuk menghapus surat masuk dan file terkait
+if (isset($_GET['delete_id'])) {
+    $delete_id = $_GET['delete_id'];
+
+    // Ambil informasi file sebelum menghapus data dari database
+    $stmt = $pdo->prepare("SELECT file_surat FROM surat_keluar WHERE id = ?");
+    $stmt->execute([$delete_id]);
+    $surat = $stmt->fetch();
+
+    if ($surat && !empty($surat['file_surat'])) {
+        $file_path = $surat['file_surat'];
+        
+        // Cek apakah file ada sebelum dihapus
+        if (file_exists($file_path)) {
+            unlink($file_path); // Hapus file dari folder
+        }
+    }
+
+    // Hapus data dari database setelah file dihapus
+    $stmt = $pdo->prepare("DELETE FROM surat_keluar WHERE id = ?");
+    $stmt->execute([$delete_id]);
+
+    // Redirect setelah data dihapus
+    header('Location: surat_keluar.php');
+    exit();
 }
 
 // Ambil data surat keluar dari database

@@ -14,19 +14,6 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
-// Fungsi untuk menghapus data surat
-if (isset($_GET['delete_id'])) {
-    $delete_id = $_GET['delete_id'];
-
-    // Menghapus data dari database berdasarkan ID
-    $stmt = $pdo->prepare("DELETE FROM surat WHERE id = ?");
-    $stmt->execute([$delete_id]);
-
-    // Redirect setelah data dihapus
-    header('Location: ' . $_SERVER['PHP_SELF']);
-    exit();
-}
-
 // Operasi Create (Tambah Data)
 if (isset($_POST['create'])) {
     $nomor_surat = $_POST['nomor_surat'];
@@ -75,11 +62,25 @@ if (isset($_POST['create'])) {
     }
 }
 
-// Fungsi untuk menghapus surat masuk
+// Fungsi untuk menghapus surat masuk dan file terkait
 if (isset($_GET['delete_id'])) {
     $delete_id = $_GET['delete_id'];
 
-    // Menghapus data dari database berdasarkan ID
+    // Ambil informasi file sebelum menghapus data dari database
+    $stmt = $pdo->prepare("SELECT file_surat FROM surat WHERE id = ?");
+    $stmt->execute([$delete_id]);
+    $surat = $stmt->fetch();
+
+    if ($surat && !empty($surat['file_surat'])) {
+        $file_path = $surat['file_surat'];
+        
+        // Cek apakah file ada sebelum dihapus
+        if (file_exists($file_path)) {
+            unlink($file_path); // Hapus file dari folder
+        }
+    }
+
+    // Hapus data dari database setelah file dihapus
     $stmt = $pdo->prepare("DELETE FROM surat WHERE id = ?");
     $stmt->execute([$delete_id]);
 
@@ -87,6 +88,7 @@ if (isset($_GET['delete_id'])) {
     header('Location: index.php');
     exit();
 }
+
 
 // Ambil data dari database untuk ditampilkan
 $stmt = $pdo->query("SELECT * FROM surat");

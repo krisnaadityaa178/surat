@@ -13,37 +13,6 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
-// Fungsi untuk menghapus SK keluar
-if (isset($_GET['delete_id'])) {
-    $delete_id = $_GET['delete_id'];
-
-    // Menyiapkan statement untuk memastikan data ada
-    $stmt = $pdo->prepare("SELECT * FROM sk_keluar WHERE id = ?");
-    $stmt->execute([$delete_id]);
-    $sk = $stmt->fetch();
-
-    if ($sk) {
-        // Menghapus data dari tabel sk_keluar berdasarkan ID
-        $stmt = $pdo->prepare("DELETE FROM sk_keluar WHERE id = ?");
-        $isDeleted = $stmt->execute([$delete_id]);
-
-        // Cek apakah penghapusan berhasil
-        if ($isDeleted) {
-            $_SESSION['message'] = "Surat Keputusan berhasil dihapus.";
-            header('Location: sk_keluar.php');
-            exit();
-        } else {
-            $_SESSION['error'] = "Gagal menghapus Surat Keputusan.";
-            header('Location: sk_keluar.php');
-            exit();
-        }
-    } else {
-        $_SESSION['error'] = "Surat Keputusan tidak ditemukan.";
-        header('Location: sk_keluar.php');
-        exit();
-    }
-}
-
 // Fungsi untuk memindahkan surat masuk ke surat keluar
 if (isset($_GET['move_id'])) {
     $move_id = $_GET['move_id'];
@@ -124,6 +93,33 @@ if (isset($_GET['move_id'])) {
         header('Location: sk_keluar.php');
         exit();
     }
+}
+
+// Fungsi untuk menghapus surat masuk dan file terkait
+if (isset($_GET['delete_id'])) {
+    $delete_id = $_GET['delete_id'];
+
+    // Ambil informasi file sebelum menghapus data dari database
+    $stmt = $pdo->prepare("SELECT file_surat FROM sk_keluar WHERE id = ?");
+    $stmt->execute([$delete_id]);
+    $surat = $stmt->fetch();
+
+    if ($surat && !empty($surat['file_surat'])) {
+        $file_path = $surat['file_surat'];
+        
+        // Cek apakah file ada sebelum dihapus
+        if (file_exists($file_path)) {
+            unlink($file_path); // Hapus file dari folder
+        }
+    }
+
+    // Hapus data dari database setelah file dihapus
+    $stmt = $pdo->prepare("DELETE FROM sk_keluar WHERE id = ?");
+    $stmt->execute([$delete_id]);
+
+    // Redirect setelah data dihapus
+    header('Location: sk_keluar.php');
+    exit();
 }
 
 // Ambil data Surat Keputusan Keluar
@@ -244,8 +240,6 @@ $sk_masuk_data = $stmt->fetchAll();
                     
                     if (in_array($file_ext, $allowed_extensions)) {
                         echo "<a href='#' onclick='openModal(\"$file_path\")' class='btn-view-file'>view</a>";
-                    } else {
-                        echo "<p>File tidak didukung untuk ditampilkan. <a href='$file_path' target='_blank'>Download file</a></p>";
                     }                   
                     ?>
                 </td>
@@ -310,14 +304,11 @@ $sk_masuk_data = $stmt->fetchAll();
                     <?php
                         $file_path = $sk['file_surat'];
                         $file_ext = pathinfo($file_path, PATHINFO_EXTENSION);
-                        $allowed_extensions = ['pdf', 'jpg', 'jpeg', 'png', 'docx', 'xlsx', 'txt'];
+                        $allowed_extensions = ['pdf'];
                         
                         if (in_array($file_ext, $allowed_extensions)) {
                             echo "<a href='#' onclick='openModal(\"$file_path\")' class='btn-view-file'>view</a>";
-                        } else {
-                            echo "<p>File tidak didukung untuk ditampilkan. <a href='$file_path' target='_blank'>Download file</a></p>";
                         }
-                        
                         ?>
                     </td>
                     <td>
@@ -339,6 +330,12 @@ $sk_masuk_data = $stmt->fetchAll();
                             <div id="filePreview"></div>    
                         </div>
                     </div>
+
+                                <!-- Loading Spinner -->
+        <div id="loading-spinner" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Tunggu Sebentar....</p>
+        </div>
 
     <!-- Footer -->
     <footer>
@@ -367,6 +364,44 @@ $sk_masuk_data = $stmt->fetchAll();
                 }
             });
 
+                            // Fungsi untuk menampilkan loading spinner
+                            function showLoading() {
+            document.getElementById('loading-spinner').style.display = 'flex';
+        }
+
+        // Fungsi untuk menyembunyikan loading spinner
+        function hideLoading() {
+            document.getElementById('loading-spinner').style.display = 'none';
+        }
+
+        // Tampilkan spinner saat halaman dimuat
+        window.addEventListener('load', function() {
+            showLoading();
+            // Sembunyikan spinner setelah 2 detik (simulasi proses loading)
+            setTimeout(function() {
+                hideLoading();
+            }, 2000); // Ganti dengan proses asli Anda
+        });
+
+        // Tampilkan spinner saat form dikirim
+        document.querySelector('form').addEventListener('submit', function() {
+            showLoading();
+        });
+
+        // Tampilkan spinner saat tombol "Delete" diklik
+        document.querySelectorAll('.btn-delete').forEach(function(button) {
+            button.addEventListener('click', function() {
+                showLoading();
+            });
+        });
+
+        // Tampilkan spinner saat tombol "Edit" diklik
+        document.querySelectorAll('.btn-edit').forEach(function(button) {
+            button.addEventListener('click', function() {
+                showLoading();
+            });
+        });
+
         // Modal functionality for viewing files
         function openModal(filePath) {
             var modal = document.getElementById('fileModal');
@@ -385,8 +420,6 @@ $sk_masuk_data = $stmt->fetchAll();
                 filePreview.innerHTML = '<p>File type is not supported for preview. <a href="${filePath}" target="_blank">Download file</a></p>';
             }
         }
-
-
         function closeModal() {
             var modal = document.getElementById('fileModal');
             modal.style.display = "none";
