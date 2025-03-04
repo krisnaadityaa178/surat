@@ -44,51 +44,49 @@ if (isset($_GET['delete_id'])) {
     }
 }
 
-// Operasi Create (Tambah Data)
-if (isset($_POST['create'])) {
-    $nomor_surat = $_POST['nomor_surat'];
-    $satuan_kerja = $_POST['satuan_kerja'];
-    $kode_klasifikasi = $_POST['kode_klasifikasi'];
-    $sub_klasifikasi = $_POST['sub_klasifikasi'];
-    $bulan = $_POST['bulan'];
-    $tahun = $_POST['tahun'];
-    $nomor_keluar = $_POST['nomor_keluar'];
-    $tanggal_surat = $_POST['tanggal_surat'];
-    $ringkasan_isi_surat = $_POST['ringkasan_isi_surat'];
+// Fungsi untuk memindahkan surat masuk ke surat keluar
+if (isset($_GET['move_id'])) {
+    $move_id = $_GET['move_id'];
 
-    // Proses upload file
-    if (isset($_FILES['file_surat']) && $_FILES['file_surat']['error'] == 0) {
-        $file_name = $_FILES['file_surat']['name'];
-        $file_tmp = $_FILES['file_surat']['tmp_name'];
-        $file_type = $_FILES['file_surat']['type'];
-        $file_size = $_FILES['file_surat']['size'];
+    // Ambil data surat masuk berdasarkan ID
+    $stmt = $pdo->prepare("SELECT * FROM sk_masuk WHERE id = ?"); // Mengambil data surat masuk
+    $stmt->execute([$move_id]);
+    $surat = $stmt->fetch();
 
-        // Tentukan lokasi penyimpanan file
-        $upload_dir = 'sk_keluar/';
-        $file_path = $upload_dir . basename($file_name);
+    if ($surat) {
+        // Tentukan lokasi file asal dan tujuan
+        $file_surat = $surat['file_surat'];
+        $upload_dir_keluar = 'sk_keluar/'; // Lokasi folder surat keluar
+        $file_surat_tujuan = $upload_dir_keluar . basename($file_surat);
 
-        // Pastikan file yang di-upload adalah tipe yang diinginkan
-        $allowed_types = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png'];
+        // Memindahkan file ke folder surat keluar
+        if (rename($file_surat, $file_surat_tujuan)) {
+            // Masukkan data ke tabel surat_keluar
+            $stmt = $pdo->prepare("INSERT INTO sk_keluar (nomor_surat, satuan_kerja, kode_klasifikasi, sub_klasifikasi, bulan, tahun, nomor_keluar, tanggal_surat, ringkasan_isi_surat, file_surat) 
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([ 
+                $surat['nomor_surat'], 
+                $surat['satuan_kerja'], 
+                $surat['kode_klasifikasi'], 
+                $surat['sub_klasifikasi'], 
+                $surat['bulan'], 
+                $surat['tahun'], 
+                $surat['nomor_keluar'], 
+                $surat['tanggal_surat'], 
+                $surat['ringkasan_isi_surat'], 
+                $file_surat_tujuan
+            ]);
 
-        if (in_array($file_type, $allowed_types)) {
-            // Pindahkan file ke direktori yang ditentukan
-            if (move_uploaded_file($file_tmp, $file_path)) {
-                // Simpan data ke database
-                $stmt = $pdo->prepare("INSERT INTO sk_keluar (nomor_surat, satuan_kerja, kode_klasifikasi, sub_klasifikasi, bulan, tahun, nomor_keluar, tanggal_surat, ringkasan_isi_surat, file_surat) 
-                                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$nomor_surat, $satuan_kerja, $kode_klasifikasi, $sub_klasifikasi, $bulan, $tahun, $nomor_keluar, $tanggal_surat, $ringkasan_isi_surat, $file_path]);
+            // Hapus data dari tabel surat (surat masuk)
+            $stmt = $pdo->prepare("DELETE FROM sk_masuk WHERE id = ?");
+            $stmt->execute([$move_id]);
 
-                // Redirect ke halaman yang sama setelah data disimpan
-                header('Location: ' . $_SERVER['PHP_SELF']);
-                exit();
-            } else {
-                echo "File upload failed.";
-            }
+            // Redirect ke halaman surat keluar setelah data dipindahkan
+            header('Location: sk_keluar.php');
+            exit();
         } else {
-            echo "Invalid file type.";
+            echo "Gagal memindahkan file surat.";
         }
-    } else {
-        echo "No file uploaded or error in uploading file.";
     }
 }
 
@@ -239,13 +237,16 @@ $sk_masuk_data = $stmt->fetchAll();
                 <td><?= $sk['tanggal_surat'] ?></td>
                 <td><?= $sk['ringkasan_isi_surat'] ?></td>
                 <td>
-                    <?php
+                <?php
                     $file_path = $sk['file_surat'];
                     $file_ext = pathinfo($file_path, PATHINFO_EXTENSION);
-
-                    if (in_array($file_ext, ['pdf']))  {
+                    $allowed_extensions = ['pdf', 'jpg', 'jpeg', 'png', 'docx', 'xlsx', 'txt'];
+                    
+                    if (in_array($file_ext, $allowed_extensions)) {
                         echo "<a href='#' onclick='openModal(\"$file_path\")' class='btn-view-file'>view</a>";
-                    }
+                    } else {
+                        echo "<p>File tidak didukung untuk ditampilkan. <a href='$file_path' target='_blank'>Download file</a></p>";
+                    }                   
                     ?>
                 </td>
                 <td>
@@ -306,13 +307,17 @@ $sk_masuk_data = $stmt->fetchAll();
                     <td><?= $sk['tanggal_surat'] ?></td>
                     <td><?= $sk['ringkasan_isi_surat'] ?></td>
                     <td>
-                        <?php
+                    <?php
                         $file_path = $sk['file_surat'];
                         $file_ext = pathinfo($file_path, PATHINFO_EXTENSION);
-
-                        if (in_array($file_ext, ['pdf']))  {
+                        $allowed_extensions = ['pdf', 'jpg', 'jpeg', 'png', 'docx', 'xlsx', 'txt'];
+                        
+                        if (in_array($file_ext, $allowed_extensions)) {
                             echo "<a href='#' onclick='openModal(\"$file_path\")' class='btn-view-file'>view</a>";
+                        } else {
+                            echo "<p>File tidak didukung untuk ditampilkan. <a href='$file_path' target='_blank'>Download file</a></p>";
                         }
+                        
                         ?>
                     </td>
                     <td>
@@ -326,37 +331,41 @@ $sk_masuk_data = $stmt->fetchAll();
         </div>
     </div>
 
+                    <!-- Modal untuk menampilkan file -->
+                    <div id="fileModal" class="modal-file">
+                        <div class="modal-content-file">
+                            <span class="close-btn-file" onclick="closeModal()">&times;</span>
+                            <h3>Pratinjau File</h3>
+                            <div id="filePreview"></div>    
+                        </div>
+                    </div>
+
     <!-- Footer -->
     <footer>
         <p>&copy; 2025 Arsip Surat Keputusan - Nadia Aprilia Siregar</p>
     </footer>
 
     <script>
-        // Get the modal
-        var modal = document.getElementById("addModal");
+                // Get the modal
+                document.addEventListener('DOMContentLoaded', function() {
+                var btn = document.getElementById("openModalBtn");
+                var modal = document.getElementById("addModal");
+                var span = document.getElementsByClassName("close-btn-out")[0];
 
-        // Get the button that opens the modal
-        var btn = document.getElementById("openModalBtn");
+                btn.onclick = function() {
+                    modal.style.display = "block";
+                }
 
-        // Get the <span> element that closes the modal
-        var span = document.getElementsByClassName("close-btn-out")[0];
+                span.onclick = function() {
+                    modal.style.display = "none";
+                }
 
-        // When the user clicks on the button, open the modal
-        btn.onclick = function() {
-            modal.style.display = "block";
-        }
-
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-
-        // When the user clicks anywhere outside of the modal, close it
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
+                window.onclick = function(event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                }
+            });
 
         // Modal functionality for viewing files
         function openModal(filePath) {
@@ -368,14 +377,15 @@ $sk_masuk_data = $stmt->fetchAll();
 
             var fileExtension = filePath.split('.').pop().toLowerCase();
 
-            if (['jpg', 'jpeg', 'png'].includes(fileExtension)) {
-                filePreview.innerHTML = `<img src="${filePath}" style="max-width: 100%; height: auto;" alt="File Preview">`;
-            } else if (fileExtension === 'pdf') {
+            if (['pdf'].includes(fileExtension)) {
                 filePreview.innerHTML = `<iframe src="${filePath}" width="100%" height="500px" style="border: none;"></iframe>`;
+            } else if (fileExtension === 'pdf') {
+                filePreview.innerHTML = '<iframe src="${filePath}" width="100%" height="500px" style="border: none;"></iframe>';
             } else {
-                filePreview.innerHTML = `<p>File type is not supported for preview. <a href="${filePath}" target="_blank">Download file</a></p>`;
+                filePreview.innerHTML = '<p>File type is not supported for preview. <a href="${filePath}" target="_blank">Download file</a></p>';
             }
         }
+
 
         function closeModal() {
             var modal = document.getElementById('fileModal');
