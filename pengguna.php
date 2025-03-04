@@ -161,6 +161,11 @@ $users = $stmt->fetchAll();
             </form>
         </div>
     </div>
+                <!-- Loading Spinner -->
+                <div id="loading-spinner" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Tunggu Sebentar....</p>
+        </div>
 
     <!-- Footer -->
     <footer>
@@ -205,6 +210,44 @@ $users = $stmt->fetchAll();
             document.getElementById("edit_username").value = username;
             editModal.style.display = "block";
         }
+
+                        // Fungsi untuk menampilkan loading spinner
+                        function showLoading() {
+            document.getElementById('loading-spinner').style.display = 'flex';
+        }
+
+        // Fungsi untuk menyembunyikan loading spinner
+        function hideLoading() {
+            document.getElementById('loading-spinner').style.display = 'none';
+        }
+
+        // Tampilkan spinner saat halaman dimuat
+        window.addEventListener('load', function() {
+            showLoading();
+            // Sembunyikan spinner setelah 2 detik (simulasi proses loading)
+            setTimeout(function() {
+                hideLoading();
+            }, 2000); // Ganti dengan proses asli Anda
+        });
+
+        // Tampilkan spinner saat form dikirim
+        document.querySelector('form').addEventListener('submit', function() {
+            showLoading();
+        });
+
+        // Tampilkan spinner saat tombol "Delete" diklik
+        document.querySelectorAll('.btn-delete').forEach(function(button) {
+            button.addEventListener('click', function() {
+                showLoading();
+            });
+        });
+
+        // Tampilkan spinner saat tombol "Edit" diklik
+        document.querySelectorAll('.btn-edit').forEach(function(button) {
+            button.addEventListener('click', function() {
+                showLoading();
+            });
+        });
     </script>
 
 </body>
