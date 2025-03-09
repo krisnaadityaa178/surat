@@ -11,12 +11,16 @@ if (isset($_POST['login'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
+    // Cek username di database
     $stmt = $pdo->prepare("SELECT * FROM admin WHERE username = ?");
     $stmt->execute([$username]);
     $admin = $stmt->fetch();
 
+    // Verifikasi password
     if ($admin && password_verify($password, $admin['password'])) {
+        // Simpan data admin di session
         $_SESSION['admin_id'] = $admin['id'];
+        $_SESSION['admin_name'] = $admin['admin_name']; // Simpan nama admin di session
         header('Location: index.php');
         exit();
     } else {

@@ -14,6 +14,16 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
+
+// Ambil data admin berdasarkan session
+$stmt = $pdo->prepare("SELECT * FROM admin WHERE id = ?");
+$stmt->execute([$_SESSION['admin_id']]);
+$admin = $stmt->fetch();
+
+// Gunakan foto default jika admin belum mengunggah foto
+$photoPath = $admin['photo'] ? "uploads/" . $admin['photo'] : "uploads/default.png";
+
+
 // Operasi Create (Tambah Data)
 if (isset($_POST['create'])) {
     $nomor_surat = $_POST['nomor_surat'];
@@ -144,8 +154,8 @@ $sk_masuk_data = $stmt->fetchAll();
     <!-- Sidebar -->
     <div class="sidebar">
             <div class="profile">
-                <img src="https://www.w3schools.com/w3images/avatar2.png" alt="Admin">
-                <h3>Hi Admin</h3>
+                <img src="<?php echo $photoPath; ?>" alt="Foto Admin" width="100">
+                <h3>Hi, <?= htmlspecialchars($_SESSION['admin_name']) ?></h3>
                 <p>Administrator</p>
             </div>
 
@@ -166,6 +176,9 @@ $sk_masuk_data = $stmt->fetchAll();
             </a>
             <a href="pengaturan.php">
                 <i class="fas fa-cogs"></i> Pengaturan
+            </a>
+            <a href="logout.php" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
             </a>
         </div>
 

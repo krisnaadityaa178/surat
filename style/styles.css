@@ -11,6 +11,74 @@ body {
     background-color: #f4f7f6;
 }
 
+/* Mengatur header agar tombol sejajar */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #f4f4f4;
+    border-bottom: 2px solid #ccc;
+}
+
+/* Grup tombol agar sejajar */
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+/* Tombol utama */
+.btn {
+    padding: 8px 12px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Tombol "Tambah Surat Keluar" */
+.btn-secondary {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #45a049;
+}
+
+/* Tombol "+ Add New Surat Keluar" */
+.btn-view {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-view:hover {
+    background-color: #0056b3;
+}
+
+/* Tombol "View File" */
+.btn-view-file {
+    background-color: #f39c12;
+    color: white;
+    padding: 5px 8px;
+}
+
+.btn-view-file:hover {
+    background-color: #e67e22;
+}
+
+/* Tombol "Delete" */
+.btn-delete {
+    background-color: #e74c3c;
+    color: white;
+    padding: 5px 8px;
+}
+
+.btn-delete:hover {
+    background-color: #c0392b;
+}
+
+
 /* Style untuk loading spinner */
 .loading-spinner {
     position: fixed;

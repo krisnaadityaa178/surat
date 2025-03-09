@@ -13,17 +13,28 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
+
+// Ambil data admin berdasarkan session
+$stmt = $pdo->prepare("SELECT * FROM admin WHERE id = ?");
+$stmt->execute([$_SESSION['admin_id']]);
+$admin = $stmt->fetch();
+
+// Gunakan foto default jika admin belum mengunggah foto
+$photoPath = $admin['photo'] ? "uploads/" . $admin['photo'] : "uploads/default.png";
+
+
 // Fungsi untuk menambah pengguna
 if (isset($_POST['create_user'])) {
+    $admin_name = $_POST['admin_name'];
     $username = $_POST['username'];
     $password = $_POST['password']; // Simpan password dalam bentuk teks biasa (tanpa hash)
 
     // Set default role sebagai 'admin'
     $role = 'admin';
-
     // Menyimpan data pengguna ke database
-    $stmt = $pdo->prepare("INSERT INTO admin (username, password) VALUES (?, ?)");
-    $stmt->execute([$username, $password]);
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    $stmt = $pdo->prepare("INSERT INTO admin (admin_name, username, password) VALUES (?, ?, ?)");
+    $stmt->execute([$admin_name, $username, $hashedPassword]);
 
     // Redirect ke halaman yang sama setelah data disimpan
     header('Location: pengguna.php');
@@ -31,36 +42,44 @@ if (isset($_POST['create_user'])) {
 }
 
 
-// Fungsi untuk mengedit pengguna
 if (isset($_POST['edit_user'])) {
     $user_id = $_POST['user_id'];
+    $admin_name = $_POST['admin_name'];
     $username = $_POST['username'];
+    $password = $_POST['password'];
 
-    // Update password hanya jika diisi
-    if (!empty($_POST['password'])) {
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare("UPDATE admin SET username = ?, password = ? WHERE id = ?");
-        $stmt->execute([$username, $password, $user_id]);
-    } else {
-        // Jika password tidak diubah, hanya update username
-        $stmt = $pdo->prepare("UPDATE admin SET username = ? WHERE id = ?");
-        $stmt->execute([$username, $user_id]);
+    // Ambil data admin lama untuk memeriksa apakah ada foto yang perlu dihapus
+    $stmt = $pdo->prepare("SELECT photo FROM admin WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $admin = $stmt->fetch();
+    $oldPhoto = $admin['photo'];
+
+    // Proses upload foto jika ada
+    $photo = $oldPhoto;
+    if (!empty($_FILES['photo']['name'])) {
+        $targetDir = "uploads/";
+        $newPhoto = time() . "_" . basename($_FILES['photo']['name']);
+        $targetFilePath = $targetDir . $newPhoto;
+
+        if (move_uploaded_file($_FILES['photo']['tmp_name'], $targetFilePath)) {
+            // Hapus foto lama jika ada
+            if ($oldPhoto && file_exists($targetDir . $oldPhoto)) {
+                unlink($targetDir . $oldPhoto);
+            }
+            $photo = $newPhoto;
+        }
     }
 
-    // Redirect setelah update
-    header('Location: pengguna.php');
-    exit();
-}
+    // Update password hanya jika diisi
+    if (!empty($password)) {
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $pdo->prepare("UPDATE admin SET admin_name = ?, username = ?, password = ?, photo = ? WHERE id = ?");
+        $stmt->execute([$admin_name, $username, $hashedPassword, $photo, $user_id]);
+    } else {
+        $stmt = $pdo->prepare("UPDATE admin SET admin_name = ?, username = ?, photo = ? WHERE id = ?");
+        $stmt->execute([$admin_name, $username, $photo, $user_id]);
+    }
 
-// Fungsi untuk menghapus pengguna
-if (isset($_GET['delete_user'])) {
-    $delete_user_id = $_GET['delete_user'];
-
-    // Menghapus data pengguna
-    $stmt = $pdo->prepare("DELETE FROM admin WHERE id = ?");
-    $stmt->execute([$delete_user_id]);
-
-    // Redirect setelah menghapus
     header('Location: pengguna.php');
     exit();
 }
@@ -83,8 +102,8 @@ $users = $stmt->fetchAll();
     <!-- Sidebar -->
     <div class="sidebar">
             <div class="profile">
-                <img src="https://www.w3schools.com/w3images/avatar2.png" alt="Admin">
-                <h3>Hi Admin</h3>
+            <img src="<?php echo $photoPath; ?>" alt="Foto Admin" width="100">
+                <h3>Hi, <?= htmlspecialchars($_SESSION['admin_name']) ?></h3>
                 <p>Administrator</p>
             </div>
 
@@ -106,6 +125,9 @@ $users = $stmt->fetchAll();
             <a href="pengaturan.php">
                 <i class="fas fa-cogs"></i> Pengaturan
             </a>
+            <a href="logout.php" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
         </div>
 
     <!-- Content -->
@@ -117,21 +139,26 @@ $users = $stmt->fetchAll();
         <table>
             <tr>
                 <th>ID</th>
+                <th>Administrator</th>
                 <th>Username</th>
-                <th>Password</th> <!-- Menambahkan kolom untuk password -->
+                <th>Password</th>
+                <th>Picture</th><!-- Menambahkan kolom untuk password -->
                 <th>Action</th>
             </tr>
             <?php foreach ($users as $user): ?>
             <tr>
                 <td><?= $user['id'] ?></td>
+                <td><?= $user['admin_name'] ?></td>
                 <td><?= $user['username'] ?></td>
-                <td><?= $user['password'] ?></td> <!-- Menampilkan password -->
+                <td><?= $user['password'] ?></td>
+                <td><?= $user['photo']?></td>
+                <!-- Menampilkan password -->
                 <td>
-                    <a href="javascript:void(0);" onclick="openEditModal(<?= $user['id'] ?>, '<?= $user['username'] ?>')" class="btn btn-edit">Edit</a>
-                    <a href="pengguna.php?delete_user=<?= $user['id'] ?>" class="btn btn-delete" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')">Delete</a>
-                </td>
-            </tr>
-            <?php endforeach; ?>
+            <a href="javascript:void(0);" onclick="openEditModal(<?= $user['id'] ?>, '<?= $user['admin_name'] ?>', '<?= $user['username'] ?>')" class="btn btn-edit">Edit</a>
+            <a href="pengguna.php?delete_user=<?= $user['id'] ?>" class="btn btn-delete" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')">Delete</a>
+        </td>
+    </tr>
+    <?php endforeach; ?>
         </table>
     </div>
 
@@ -140,27 +167,36 @@ $users = $stmt->fetchAll();
         <div class="modal-content">
             <span class="close-btn">&times;</span>
             <h3>Tambah Pengguna</h3>
-            <form method="post">
-                <input type="text" name="username" placeholder="Username" required>
-                <input type="password" name="password" placeholder="Password" required>
-                <button type="submit" name="create_user">Tambah Pengguna</button>
-            </form>
+            <form method="POST" enctype="multipart/form-data">
+            <input type="text" name="admin_name" placeholder="Nama Admin" required>
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="file" name="photo" accept="image/*">
+            <button type="submit" name="create_user">Tambah Pengguna</button>
+        </form>
+
         </div>
     </div>
 
-    <!-- Edit User Modal -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h3>Edit Pengguna</h3>
-            <form method="post">
-                <input type="hidden" id="edit_user_id" name="user_id">
-                <input type="text" id="edit_username" name="username" placeholder="Username" required>
-                <input type="password" id="edit_password" name="password" placeholder="Password (Kosongkan jika tidak ingin mengubah)">
-                <button type="submit" name="edit_user">Update Pengguna</button>
-            </form>
-        </div>
+<!-- Edit User Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h3>Edit Pengguna</h3>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" id="edit_user_id" name="user_id">
+            <input type="text" id="edit_admin_name" name="admin_name" placeholder="Admin Name" required>
+            <input type="text" id="edit_username" name="username" placeholder="Username" required>
+            <input type="password" id="edit_password" name="password" placeholder="Password (Kosongkan jika tidak ingin mengubah)">
+            
+            <!-- Input untuk unggah foto -->
+            <input type="file" name="photo" accept="image/*">
+            
+            <button type="submit" name="edit_user">Update Pengguna</button>
+        </form>
     </div>
+</div>
+
                 <!-- Loading Spinner -->
                 <div id="loading-spinner" class="loading-spinner">
             <div class="spinner"></div>
@@ -205,11 +241,12 @@ $users = $stmt->fetchAll();
         }
 
         // Function to open edit modal and fill data
-        function openEditModal(id, username) {
-            document.getElementById("edit_user_id").value = id;
-            document.getElementById("edit_username").value = username;
-            editModal.style.display = "block";
-        }
+        function openEditModal(id, admin_name, username) {
+        document.getElementById("edit_user_id").value = id;
+        document.getElementById("edit_admin_name").value = admin_name;
+        document.getElementById("edit_username").value = username;
+        editModal.style.display = "block";
+    }
 
                         // Fungsi untuk menampilkan loading spinner
                         function showLoading() {
@@ -246,9 +283,12 @@ $users = $stmt->fetchAll();
         document.querySelectorAll('.btn-edit').forEach(function(button) {
             button.addEventListener('click', function() {
                 showLoading();
+                // Simulasikan proses edit selesai (misalnya, setelah redirect)
+        setTimeout(function() {
+            hideLoading();
+        }, 2000); // Ganti dengan logika asli Anda
             });
         });
     </script>
-
 </body>
 </html>
