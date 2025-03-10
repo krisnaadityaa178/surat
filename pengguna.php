@@ -2,7 +2,6 @@
     Created Date: 2025-02-27
     this project is for BBPSDMP (Center for Human Resources Development and Research of Communication and Informatics Medan)
 -->
-
 <?php
 session_start();
 include('config.php');
@@ -13,7 +12,6 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
-
 // Ambil data admin berdasarkan session
 $stmt = $pdo->prepare("SELECT * FROM admin WHERE id = ?");
 $stmt->execute([$_SESSION['admin_id']]);
@@ -22,25 +20,44 @@ $admin = $stmt->fetch();
 // Gunakan foto default jika admin belum mengunggah foto
 $photoPath = $admin['photo'] ? "uploads/" . $admin['photo'] : "uploads/default.png";
 
+// Fungsi untuk menghapus pengguna
+if (isset($_GET['delete_user'])) {
+    $user_id = $_GET['delete_user'];
+    
+    // Ambil data pengguna yang akan dihapus
+    $stmt = $pdo->prepare("SELECT photo FROM admin WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $user = $stmt->fetch();
+
+    // Hapus foto pengguna jika ada
+    if ($user['photo'] && file_exists("uploads/" . $user['photo'])) {
+        unlink("uploads/" . $user['photo']);
+    }
+
+    // Hapus pengguna dari database
+    $stmt = $pdo->prepare("DELETE FROM admin WHERE id = ?");
+    $stmt->execute([$user_id]);
+
+    // Redirect ke halaman pengguna setelah dihapus
+    header('Location: pengguna.php');
+    exit();
+}
 
 // Fungsi untuk menambah pengguna
 if (isset($_POST['create_user'])) {
     $admin_name = $_POST['admin_name'];
     $username = $_POST['username'];
-    $password = $_POST['password']; // Simpan password dalam bentuk teks biasa (tanpa hash)
-
+    $password = $_POST['password'];
+    
     // Set default role sebagai 'admin'
     $role = 'admin';
-    // Menyimpan data pengguna ke database
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     $stmt = $pdo->prepare("INSERT INTO admin (admin_name, username, password) VALUES (?, ?, ?)");
     $stmt->execute([$admin_name, $username, $hashedPassword]);
 
-    // Redirect ke halaman yang sama setelah data disimpan
     header('Location: pengguna.php');
     exit();
 }
-
 
 if (isset($_POST['edit_user'])) {
     $user_id = $_POST['user_id'];
@@ -48,13 +65,11 @@ if (isset($_POST['edit_user'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Ambil data admin lama untuk memeriksa apakah ada foto yang perlu dihapus
     $stmt = $pdo->prepare("SELECT photo FROM admin WHERE id = ?");
     $stmt->execute([$user_id]);
     $admin = $stmt->fetch();
     $oldPhoto = $admin['photo'];
 
-    // Proses upload foto jika ada
     $photo = $oldPhoto;
     if (!empty($_FILES['photo']['name'])) {
         $targetDir = "uploads/";
@@ -62,7 +77,6 @@ if (isset($_POST['edit_user'])) {
         $targetFilePath = $targetDir . $newPhoto;
 
         if (move_uploaded_file($_FILES['photo']['tmp_name'], $targetFilePath)) {
-            // Hapus foto lama jika ada
             if ($oldPhoto && file_exists($targetDir . $oldPhoto)) {
                 unlink($targetDir . $oldPhoto);
             }
@@ -70,7 +84,6 @@ if (isset($_POST['edit_user'])) {
         }
     }
 
-    // Update password hanya jika diisi
     if (!empty($password)) {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         $stmt = $pdo->prepare("UPDATE admin SET admin_name = ?, username = ?, password = ?, photo = ? WHERE id = ?");
@@ -84,10 +97,10 @@ if (isset($_POST['edit_user'])) {
     exit();
 }
 
-// Ambil data pengguna dari database
 $stmt = $pdo->query("SELECT * FROM admin");
 $users = $stmt->fetchAll();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -173,8 +186,9 @@ $users = $stmt->fetchAll();
                 <td><?= $user['admin_name'] ?></td>
                 <td><?= $user['username'] ?></td>
                 <td><?= $user['password'] ?></td>
-                <td><?= $user['photo']?></td>
-                <!-- Menampilkan password -->
+                <td>
+                    <img src="<?= $user['photo'] ? 'uploads/' . $user['photo'] : 'uploads/default.png' ?>" alt="User Photo" width="50" height="50" style="border-radius: 5px;">
+                </td>
                 <td>
             <a href="javascript:void(0);" onclick="openEditModal(<?= $user['id'] ?>, '<?= $user['admin_name'] ?>', '<?= $user['username'] ?>')" class="btn btn-edit">Edit</a>
             <a href="pengguna.php?delete_user=<?= $user['id'] ?>" class="btn btn-delete" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')">Delete</a>

@@ -330,6 +330,7 @@ $sk_masuk_data = $stmt->fetchAll();
     </footer>
 
     <script>
+        // Fungsi untuk mengcount nomor surat yang sudah dipakai
         document.getElementById("nomor_surat").addEventListener("input", function() {
         let nomorInput = this.value.trim();
         let existingNumbers = Array.from(document.querySelectorAll("table tr td:first-child"))
@@ -337,6 +338,7 @@ $sk_masuk_data = $stmt->fetchAll();
         let alertIcon = document.getElementById("alert-icon");
         let warningText = document.getElementById("warning-text");
 
+        // Tampilkan elemen tanda peringatan
         if (existingNumbers.includes(nomorInput)) {
             alertIcon.style.display = "inline"; // Tampilkan tanda seru
             warningText.style.display = "block"; // Tampilkan teks peringatan
