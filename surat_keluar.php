@@ -111,12 +111,30 @@ $surat_data = $stmt->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style\styles.css">
+    <style>
+    .logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 10px;
+    gap: 10px;
+    }
+
+    .logo {
+        width: 130px; /* Pastikan ukuran kecil */
+        height: auto;
+        max-width: 100%;
+    }
+    </style>
     <title>Admin Surat Keluar</title>
 </head>
 <body>
 
     <!-- Sidebar -->
     <div class="sidebar">
+    <div class="logo-container">
+    <img src="logo\Gambar_WhatsApp_2025-03-09_pukul_22.23.47_64dd9a5b-removebg-preview.png" alt="BBPSDMP Medan Logo" class="logo">
+        </div>
         <div class="profile">
             <img src="<?php echo $photoPath; ?>" alt="Foto Admin" width="100">
             <h3>Hi, <?= htmlspecialchars($_SESSION['admin_name']) ?></h3>
@@ -226,7 +244,11 @@ $surat_data = $stmt->fetchAll();
             <span class="close-btn">&times;</span>
             <h3>Tambah Surat Keluar</h3>
             <form method="post" enctype="multipart/form-data">
-                <input type="text" name="nomor_surat" placeholder="Nomor Surat" required>
+            <div style="position: relative;">
+                <input type="text" id="nomor_surat" name="nomor_surat" placeholder="Nomor Surat" required>
+                <i id="alert-icon" class="fas fa-exclamation-circle" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: red; display: none;"></i>
+            </div>
+            <small id="warning-text" style="color: red; display: none;">Nomor surat sudah digunakan!</small>
                 <input type="text" name="satuan_kerja" placeholder="Satuan Kerja" required>
                 <input type="text" name="kode_klasifikasi" placeholder="Kode Klasifikasi" required>
                 <input type="text" name="sub_klasifikasi" placeholder="Sub Klasifikasi" required>
@@ -265,6 +287,21 @@ $surat_data = $stmt->fetchAll();
     </footer>
 
     <script>
+        document.getElementById("nomor_surat").addEventListener("input", function() {
+        let nomorInput = this.value.trim();
+        let existingNumbers = Array.from(document.querySelectorAll("table tr td:first-child"))
+                                    .map(td => td.textContent.trim());
+        let alertIcon = document.getElementById("alert-icon");
+        let warningText = document.getElementById("warning-text");
+
+        if (existingNumbers.includes(nomorInput)) {
+            alertIcon.style.display = "inline"; // Tampilkan tanda seru
+            warningText.style.display = "block"; // Tampilkan teks peringatan
+        } else {
+            alertIcon.style.display = "none"; // Sembunyikan tanda seru
+            warningText.style.display = "none"; // Sembunyikan teks peringatan
+        }
+    });
         // Fungsi untuk menampilkan loading spinner
         function showLoading() {
             document.getElementById('loading-spinner').style.display = 'flex';

@@ -95,12 +95,34 @@ $users = $stmt->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style\styles.css">
+
+    <style>
+    .logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 10px;
+    gap: 10px;
+    }
+
+    .logo {
+        width: 130px; /* Pastikan ukuran kecil */
+        height: auto;
+        max-width: 100%;
+    }
+    </style>
     <title>Admin - Pengguna</title>
 </head>
 <body>
 
     <!-- Sidebar -->
     <div class="sidebar">
+        <!-- Logo BBPSDMP Medan -->
+        <div class="logo-container">
+    <img src="logo\Gambar_WhatsApp_2025-03-09_pukul_22.23.47_64dd9a5b-removebg-preview.png" alt="BBPSDMP Medan Logo" class="logo">
+        </div>
+
+
             <div class="profile">
             <img src="<?php echo $photoPath; ?>" alt="Foto Admin" width="100">
                 <h3>Hi, <?= htmlspecialchars($_SESSION['admin_name']) ?></h3>
