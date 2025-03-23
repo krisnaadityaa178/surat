@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 04 Mar 2025 pada 15.37
+-- Waktu pembuatan: 23 Mar 2025 pada 18.43
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.2.12
 
@@ -29,17 +29,19 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `admin` (
   `id` int(11) NOT NULL,
+  `admin_name` varchar(100) NOT NULL,
   `username` varchar(50) NOT NULL,
-  `password` varchar(255) NOT NULL
+  `password` text NOT NULL,
+  `photo` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `admin`
 --
 
-INSERT INTO `admin` (`id`, `username`, `password`) VALUES
-(2, 'admin', 'password123'),
-(8, 'admin1', 'password');
+INSERT INTO `admin` (`id`, `admin_name`, `username`, `password`, `photo`) VALUES
+(14, 'Nadia Aprilia', 'admin12', '$2y$12$Bv6nm0LC1yfgo3Yk9md9Vehxqn2pN.nsG2XsROsm5tKJuFFjZETFK', '1741532766_testpp.jpeg'),
+(16, 'Nadia Aprilia', 'admin', '$2a$04$Nu.pgnOcTzPu.QTvPlg5lefJYNr0csM/i3m2nTaNNWmNHMIEsrNQa', '1742648254_3062f77e-550f-4962-9ccb-74a353b13717.jpeg');
 
 -- --------------------------------------------------------
 
@@ -61,6 +63,14 @@ CREATE TABLE `sk_keluar` (
   `file_surat` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `sk_keluar`
+--
+
+INSERT INTO `sk_keluar` (`id`, `nomor_surat`, `satuan_kerja`, `kode_klasifikasi`, `sub_klasifikasi`, `bulan`, `tahun`, `nomor_keluar`, `tanggal_surat`, `ringkasan_isi_surat`, `file_surat`) VALUES
+(8, '1669', 'BBPSDMP', 'KU', '01.1998', 2, 2025, '1669/BBPSDMP', '2025-02-12', 'tesss', 'sk_keluar/DAFTAR AGENDA SURAT BBPSDMP KOMINFO MEDAN - Google Spreadsheet.pdf'),
+(10, '167', 'BBPSDMP', 'TA', '01.1998', 2, 2025, '167/BBPSDMP', '2025-02-12', 'ddfdfd', 'sk_keluar/DAFTAR AGENDA SURAT BBPSDMP KOMINFO MEDAN - Google Spreadsheet.pdf');
+
 -- --------------------------------------------------------
 
 --
@@ -80,6 +90,13 @@ CREATE TABLE `sk_masuk` (
   `ringkasan_isi_surat` text DEFAULT NULL,
   `file_surat` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `sk_masuk`
+--
+
+INSERT INTO `sk_masuk` (`id`, `nomor_surat`, `satuan_kerja`, `kode_klasifikasi`, `sub_klasifikasi`, `bulan`, `tahun`, `nomor_keluar`, `tanggal_surat`, `ringkasan_isi_surat`, `file_surat`) VALUES
+(21, '1669', 'BBPSDMP', 'FR', '01.165', 3, 2025, '166/BBPSDMP', '2025-03-12', 'tes sk masuk', 'sk_masuk/kominfo 1.pdf');
 
 -- --------------------------------------------------------
 
@@ -101,6 +118,13 @@ CREATE TABLE `surat` (
   `file_surat` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `surat`
+--
+
+INSERT INTO `surat` (`id`, `nomor_surat`, `satuan_kerja`, `kode_klasifikasi`, `sub_klasifikasi`, `bulan`, `tahun`, `nomor_keluar`, `tanggal_surat`, `ringkasan_isi_surat`, `file_surat`) VALUES
+(25, '166990', 'BBPSDMP', 'KA', '01.1998', 2, 2025, '1669776/BBPSDMP', '2025-02-12', 'test ', 'surat_masuk/Daftar Hadir Peserta 25 Februari 2025.pdf');
+
 -- --------------------------------------------------------
 
 --
@@ -121,6 +145,13 @@ CREATE TABLE `surat_keluar` (
   `file_surat` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `surat_keluar`
+--
+
+INSERT INTO `surat_keluar` (`id`, `nomor_surat`, `satuan_kerja`, `kode_klasifikasi`, `sub_klasifikasi`, `bulan`, `tahun`, `nomor_keluar`, `tanggal_surat`, `ringkasan_isi_surat`, `file_surat`, `created_at`) VALUES
+(17, '1669', 'BBPSDMP', 'TA', '01.165', 2, 2025, '1669/BBPSDMP', '2025-02-12', 'tes', 'surat_keluar/DAFTAR AGENDA SURAT BBPSDMP KOMINFO MEDAN - Google Spreadsheet.pdf', '2025-03-09 12:55:26');
 
 --
 -- Indexes for dumped tables
@@ -164,31 +195,31 @@ ALTER TABLE `surat_keluar`
 -- AUTO_INCREMENT untuk tabel `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT untuk tabel `sk_keluar`
 --
 ALTER TABLE `sk_keluar`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT untuk tabel `sk_masuk`
 --
 ALTER TABLE `sk_masuk`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT untuk tabel `surat`
 --
 ALTER TABLE `surat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT untuk tabel `surat_keluar`
 --
 ALTER TABLE `surat_keluar`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -5,6 +5,9 @@
 
 <!-- surat_masuk -->
 <?php
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_secure', 1); // Jika HTTPS digunakan
+ini_set('session.use_strict_mode', 1);
 session_start();
 include('config.php');
 
