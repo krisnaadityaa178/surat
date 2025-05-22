@@ -111,29 +111,30 @@ if (isset($_GET['move_id'])) {
 // Fungsi untuk menghapus surat masuk dan file terkait
 if (isset($_GET['delete_id'])) {
     $delete_id = $_GET['delete_id'];
+    $admin_id = $_SESSION['admin_id'];
 
-    // Ambil informasi file sebelum menghapus data dari database
     $stmt = $pdo->prepare("SELECT file_surat FROM sk_masuk WHERE id = ?");
     $stmt->execute([$delete_id]);
     $surat = $stmt->fetch();
 
     if ($surat && !empty($surat['file_surat'])) {
         $file_path = $surat['file_surat'];
-        
-        // Cek apakah file ada sebelum dihapus
         if (file_exists($file_path)) {
-            unlink($file_path); // Hapus file dari folder
+            unlink($file_path);
         }
     }
 
-    // Hapus data dari database setelah file dihapus
+    $stmt = $pdo->prepare("INSERT INTO log_hapus_surat (admin_id, surat_id, kategori_surat) VALUES (?, ?, 'SK Masuk')");
+    $stmt->execute([$admin_id, $delete_id]);
+
     $stmt = $pdo->prepare("DELETE FROM sk_masuk WHERE id = ?");
     $stmt->execute([$delete_id]);
 
-    // Redirect setelah data dihapus
+    //$_SESSION['message'] = "Surat Keputusan Masuk berhasil dihapus dan dicatat dalam log.";
     header('Location: sk_masuk.php');
     exit();
 }
+
 
 // Ambil data Surat Keputusan Masuk
 $stmt = $pdo->query("SELECT * FROM sk_masuk");
@@ -188,6 +189,9 @@ $sk_masuk_data = $stmt->fetchAll();
             </a>
             <a href="surat_keluar.php">
                 <i class="fas fa-envelope"></i> Surat Keluar
+            </a>
+            <a href="log_hapus.php">
+                <i class="fas fa-history"></i> Surat Dihapus
             </a>
             <a href="pengguna.php">
                 <i class="fas fa-users"></i> Pengguna

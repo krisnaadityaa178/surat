@@ -72,32 +72,57 @@ if (isset($_POST['create'])) {
     }
 }
 
-// Fungsi untuk menghapus surat keluar dan file terkait
+// Fungsi untuk "menghapus" surat masuk dengan memindahkan file ke /file_dihapus/ dan menghapus data dari database
 if (isset($_GET['delete_id'])) {
     $delete_id = $_GET['delete_id'];
+    $admin_id = $_SESSION['admin_id']; // Ambil ID admin dari session
 
-    // Ambil informasi file sebelum menghapus data dari database
-    $stmt = $pdo->prepare("SELECT file_surat FROM surat_keluar WHERE id = ?");
-    $stmt->execute([$delete_id]);
-    $surat = $stmt->fetch();
+    try {
+        // Ambil informasi file sebelum menghapus dari database
+        $stmt = $pdo->prepare("SELECT file_surat FROM surat_keluar WHERE id = ?");
+        $stmt->execute([$delete_id]);
+        $surat = $stmt->fetch();
 
-    if ($surat && !empty($surat['file_surat'])) {
-        $file_path = $surat['file_surat'];
-        
-        // Cek apakah file ada sebelum dihapus
-        if (file_exists($file_path)) {
-            unlink($file_path); // Hapus file dari folder
+        $file_pindah = false; // Flag untuk memastikan file berhasil dipindah
+
+        if ($surat && !empty($surat['file_surat'])) {
+            $file_path = $surat['file_surat'];
+            $file_name = basename($file_path); // Ambil nama file saja
+            $deleted_folder = __DIR__ . "/file_dihapus/";
+
+            // Pastikan folder "file_dihapus" ada
+            if (!is_dir($deleted_folder)) {
+                mkdir($deleted_folder, 0777, true);
+            }
+
+            $new_file_path = $deleted_folder . $file_name;
+
+            // Pindahkan file ke folder file_dihapus
+            if (file_exists($file_path) && rename($file_path, $new_file_path)) {
+                $file_pindah = true; // File berhasil dipindah
+
+                // Jika file berhasil dipindahkan, catat di log
+                $stmt = $pdo->prepare("INSERT INTO log_hapus_surat (admin_id, surat_id, kategori_surat, file_surat) VALUES (?, ?, 'Surat Keluar', ?)");
+                $stmt->execute([$admin_id, $delete_id, $new_file_path]);
+            }
         }
+
+        // Jika file berhasil dipindahkan atau tidak ada file, hapus data dari database
+        $stmt = $pdo->prepare("DELETE FROM surat_keluar WHERE id = ?");
+        $stmt->execute([$delete_id]);
+
+        if ($stmt->rowCount() > 0) {
+            // Jika data berhasil dihapus, redirect ke index
+            header('Location: surat_keluar.php');
+            exit();
+        } else {
+            echo "Gagal menghapus data dari database.";
+        }
+    } catch (Exception $e) {
+        echo "Terjadi kesalahan: " . $e->getMessage();
     }
-
-    // Hapus data dari database setelah file dihapus
-    $stmt = $pdo->prepare("DELETE FROM surat_keluar WHERE id = ?");
-    $stmt->execute([$delete_id]);
-
-    // Redirect setelah data dihapus
-    header('Location: surat_keluar.php');
-    exit();
 }
+
 
 // Ambil data dari database untuk ditampilkan
 $stmt = $pdo->query("SELECT * FROM surat_keluar");
@@ -152,6 +177,9 @@ $surat_data = $stmt->fetchAll();
         </a>
         <a href="surat_keluar.php">
             <i class="fas fa-envelope"></i> Surat Keluar
+        </a>
+        <a href="log_hapus.php">
+            <i class="fas fa-history"></i> Surat Dihapus
         </a>
         <a href="pengguna.php">
             <i class="fas fa-users"></i> Pengguna

@@ -108,7 +108,7 @@ if (isset($_POST['update'])) {
 
         // Fungsi untuk kembali ke halaman index
         function goBack() {
-            window.location.href = 'index.php';
+            window.location.href = 'surat_keluar.php';
         }
     </script>
 </head>
