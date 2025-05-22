@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 23 Mar 2025 pada 18.43
+-- Waktu pembuatan: 22 Bulan Mei 2025 pada 10.02
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.2.12
 
@@ -46,6 +46,33 @@ INSERT INTO `admin` (`id`, `admin_name`, `username`, `password`, `photo`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `log_hapus_surat`
+--
+
+CREATE TABLE `log_hapus_surat` (
+  `id` int(11) NOT NULL,
+  `admin_id` int(11) DEFAULT NULL,
+  `surat_id` int(11) DEFAULT NULL,
+  `kategori_surat` enum('Surat Masuk','Surat Keluar','SK Masuk','SK Keluar') DEFAULT NULL,
+  `waktu_hapus` timestamp NOT NULL DEFAULT current_timestamp(),
+  `nomor_surat` varchar(50) DEFAULT NULL,
+  `satuan_kerja` varchar(100) DEFAULT NULL,
+  `bulan` varchar(20) DEFAULT NULL,
+  `tahun` int(11) DEFAULT NULL,
+  `status_pulih` tinyint(1) DEFAULT 0,
+  `file_surat` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `log_hapus_surat`
+--
+
+INSERT INTO `log_hapus_surat` (`id`, `admin_id`, `surat_id`, `kategori_surat`, `waktu_hapus`, `nomor_surat`, `satuan_kerja`, `bulan`, `tahun`, `status_pulih`, `file_surat`) VALUES
+(7, 16, 20, 'Surat Keluar', '2025-03-28 17:05:37', NULL, NULL, NULL, NULL, 0, 'D:\\xampp\\htdocs\\surat/file_dihapus/DAFTAR AGENDA SURAT BBPSDMP KOMINFO MEDAN - Google Spreadsheet.pdf');
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `sk_keluar`
 --
 
@@ -68,8 +95,7 @@ CREATE TABLE `sk_keluar` (
 --
 
 INSERT INTO `sk_keluar` (`id`, `nomor_surat`, `satuan_kerja`, `kode_klasifikasi`, `sub_klasifikasi`, `bulan`, `tahun`, `nomor_keluar`, `tanggal_surat`, `ringkasan_isi_surat`, `file_surat`) VALUES
-(8, '1669', 'BBPSDMP', 'KU', '01.1998', 2, 2025, '1669/BBPSDMP', '2025-02-12', 'tesss', 'sk_keluar/DAFTAR AGENDA SURAT BBPSDMP KOMINFO MEDAN - Google Spreadsheet.pdf'),
-(10, '167', 'BBPSDMP', 'TA', '01.1998', 2, 2025, '167/BBPSDMP', '2025-02-12', 'ddfdfd', 'sk_keluar/DAFTAR AGENDA SURAT BBPSDMP KOMINFO MEDAN - Google Spreadsheet.pdf');
+(8, '1669', 'BBPSDMP', 'KU', '01.1998', 2, 2025, '1669/BBPSDMP', '2025-02-12', 'tesss', 'sk_keluar/DAFTAR AGENDA SURAT BBPSDMP KOMINFO MEDAN - Google Spreadsheet.pdf');
 
 -- --------------------------------------------------------
 
@@ -118,13 +144,6 @@ CREATE TABLE `surat` (
   `file_surat` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data untuk tabel `surat`
---
-
-INSERT INTO `surat` (`id`, `nomor_surat`, `satuan_kerja`, `kode_klasifikasi`, `sub_klasifikasi`, `bulan`, `tahun`, `nomor_keluar`, `tanggal_surat`, `ringkasan_isi_surat`, `file_surat`) VALUES
-(25, '166990', 'BBPSDMP', 'KA', '01.1998', 2, 2025, '1669776/BBPSDMP', '2025-02-12', 'test ', 'surat_masuk/Daftar Hadir Peserta 25 Februari 2025.pdf');
-
 -- --------------------------------------------------------
 
 --
@@ -147,13 +166,6 @@ CREATE TABLE `surat_keluar` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `surat_keluar`
---
-
-INSERT INTO `surat_keluar` (`id`, `nomor_surat`, `satuan_kerja`, `kode_klasifikasi`, `sub_klasifikasi`, `bulan`, `tahun`, `nomor_keluar`, `tanggal_surat`, `ringkasan_isi_surat`, `file_surat`, `created_at`) VALUES
-(17, '1669', 'BBPSDMP', 'TA', '01.165', 2, 2025, '1669/BBPSDMP', '2025-02-12', 'tes', 'surat_keluar/DAFTAR AGENDA SURAT BBPSDMP KOMINFO MEDAN - Google Spreadsheet.pdf', '2025-03-09 12:55:26');
-
---
 -- Indexes for dumped tables
 --
 
@@ -162,6 +174,13 @@ INSERT INTO `surat_keluar` (`id`, `nomor_surat`, `satuan_kerja`, `kode_klasifika
 --
 ALTER TABLE `admin`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `log_hapus_surat`
+--
+ALTER TABLE `log_hapus_surat`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `admin_id` (`admin_id`);
 
 --
 -- Indeks untuk tabel `sk_keluar`
@@ -198,6 +217,12 @@ ALTER TABLE `admin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
+-- AUTO_INCREMENT untuk tabel `log_hapus_surat`
+--
+ALTER TABLE `log_hapus_surat`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
 -- AUTO_INCREMENT untuk tabel `sk_keluar`
 --
 ALTER TABLE `sk_keluar`
@@ -219,7 +244,17 @@ ALTER TABLE `surat`
 -- AUTO_INCREMENT untuk tabel `surat_keluar`
 --
 ALTER TABLE `surat_keluar`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
+--
+
+--
+-- Ketidakleluasaan untuk tabel `log_hapus_surat`
+--
+ALTER TABLE `log_hapus_surat`
+  ADD CONSTRAINT `log_hapus_surat_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
