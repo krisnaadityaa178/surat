@@ -159,9 +159,6 @@ $sk_keluar_data = $stmt->fetchAll();
         <a href="pengguna.php">
             <i class="fas fa-users"></i> Pengguna
         </a>
-        <a href="pengaturan.php">
-            <i class="fas fa-cogs"></i> Pengaturan
-        </a>
         <a href="logout.php" class="logout-btn">
             <i class="fas fa-sign-out-alt"></i> Logout
         </a>

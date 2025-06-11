@@ -163,8 +163,6 @@ $surat_data = $stmt->fetchAll();
             <a href="log_hapus.php">
                 <i class="fas fa-history"></i> Surat Dihapus
             </a>
-            <a href="pengaturan.php">
-                <i class="fas fa-cogs"></i> Pengaturan
             </a>
             <a href="logout.php" class="logout-btn">
                 <i class="fas fa-sign-out-alt"></i> Logout

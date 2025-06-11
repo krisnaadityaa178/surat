@@ -36,135 +36,189 @@ if (isset($_POST['login'])) {
     <title>Admin Login</title>
     <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- Add the CSS file or include the CSS in a style tag -->
 
     <style>
-        /* Global Styles */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #2a3f54; /* Dark blue background matching the sidebar */
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* Container for the Login form */
-.login-container {
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    width: 400px;
-    padding: 30px;
-    text-align: center;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #2c3e50;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-/* Logo or avatar area */
-.login-avatar {
-    width: 100px;
-    height: 100px;
-    margin: 0 auto 20px;
-    background-color: #96bf48; /* Green from the avatar in the image */
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 5px solid #e67e22; /* Orange border from the avatar */
-}
+        /* Container for the Login form - SAMA DENGAN REGISTER */
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 420px; /* SAMA DENGAN REGISTER */
+        }
 
-.login-avatar i {
-    font-size: 50px;
-    color: white;
-}
+        /* Avatar container - KONSISTEN DENGAN REGISTER */
+        .avatar-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-/* Title Style */
-.login-title {
-    color: #2a3f54; /* Dark blue matching the sidebar */
-    font-size: 24px;
-    margin-bottom: 30px;
-    font-weight: bold;
-}
+        .login-avatar {
+            width: 80px; /* SAMA DENGAN REGISTER */
+            height: 80px; /* SAMA DENGAN REGISTER */
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a8e6cf, #88d8a3);
+            border: 4px solid #ff8a80;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
 
-/* Form Group */
-.form-group {
-    margin-bottom: 20px;
-    text-align: left;
-}
+        .login-avatar i {
+            font-size: 40px; /* SAMA DENGAN REGISTER SVG SIZE */
+            color: white;
+        }
 
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    color: #555;
-    font-weight: bold;
-}
+        /* Title Style - SAMA DENGAN REGISTER */
+        .login-title {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
 
-/* Input Fields */
-.form-control {
-    width: 100%;
-    padding: 12px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-    box-sizing: border-box;
-    transition: border-color 0.3s;
-}
+        /* Form Group - SAMA DENGAN REGISTER */
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-.form-control:focus {
-    border-color: #1a82c3; /* Blue color when focused */
-    outline: none;
-    box-shadow: 0 0 5px rgba(26, 130, 195, 0.3);
-}
+        .form-group label {
+            display: block;
+            color: #555;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
 
-/* Button Style */
-.btn-login {
-    width: 100%;
-    padding: 12px;
-    background-color: #1a82c3; /* Blue button color from the View buttons */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    font-weight: bold;
-    margin-top: 10px;
-}
+        /* Input Fields - SAMA DENGAN REGISTER */
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            background: #f8f9fa;
+        }
 
-.btn-login:hover {
-    background-color: #0062a3; /* Darker blue on hover */
-}
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            background: white;
+        }
 
-/* Error message styling */
-.error-message {
-    color: #e74c3c; /* Red color for error */
-    font-size: 14px;
-    margin-top: 15px;
-    text-align: center;
-}
+        .form-control::placeholder {
+            color: #aaa;
+        }
 
-/* Footer */
-.login-footer {
-    margin-top: 30px;
-    color: #555;
-    font-size: 14px;
-}
+        /* Button Style - SAMA DENGAN REGISTER */
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
 
-/* Copyright text */
-.copyright {
-    margin-top: 20px;
-    color: #999;
-    font-size: 12px;
-}
+        .btn-login:hover {
+            background: #2980b9;
+        }
+
+        .btn-login:active {
+            transform: translateY(1px);
+        }
+
+        /* Link styling - SAMA DENGAN REGISTER */
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login-link a {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer - SAMA DENGAN REGISTER */
+        .copyright {
+            text-align: center;
+            color: #bbb;
+            font-size: 12px;
+            margin-top: 25px;
+        }
+
+        /* Error message styling - KONSISTEN DENGAN ALERT REGISTER */
+        .error-message {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            text-align: center;
+        }
+
+        /* Success message styling - UNTUK PESAN SUKSES REGISTER */
+        .success-message {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="login-avatar">
-            <i class="fas fa-user"></i>
+        <div class="avatar-container">
+            <div class="login-avatar">
+                <i class="fas fa-user"></i>
+            </div>
         </div>
+        
         <div class="login-title">Admin Login</div>
+        
+        <?php if (isset($_SESSION['success_message'])): ?>
+            <div class="success-message">
+                <?php 
+                echo $_SESSION['success_message'];
+                unset($_SESSION['success_message']);
+                ?>
+            </div>
+        <?php endif; ?>
         
         <?php if (isset($error)): ?>
             <div class="error-message"><?php echo $error; ?></div>
@@ -182,6 +236,10 @@ body {
             </div>
             
             <button type="submit" name="login" class="btn-login">LOGIN</button>
+
+            <div class="login-link">
+                <p>Belum punya akun? <a href="register.php">Daftar di sini</a></p>
+            </div>
         </form>
         
         <div class="copyright">
